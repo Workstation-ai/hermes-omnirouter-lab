@@ -136,8 +136,9 @@ test_tool_calling() {
   response="$(curl -sf -X POST "${GATEWAY_URL}/v1/chat/completions" \
     -H "Content-Type: application/json" \
     -d '{
-      "model": "auto",
+      "model": "auto/coding",
       "messages": [{"role": "user", "content": "What is the weather in Tokyo?"}],
+      "stream": false,
       "tools": [
         {
           "type": "function",
@@ -189,7 +190,7 @@ test_hermes_e2e() {
   fi
 
   local output
-  output="$(hermes chat "${hermes_args[@]}" -p "Say hello" 2>&1)" || {
+  output="$(hermes chat "${hermes_args[@]}" -q "Say hello" 2>&1)" || {
     fail "hermes-e2e" "hermes chat failed — ${output}"
     return 1
   }
