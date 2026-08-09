@@ -1,0 +1,21 @@
+project: "hermes-omnirouter-lab"
+stack: "Node.js / shell lab"
+persistence: "hybrid"
+strict_tdd: false
+context: |
+  Lab/experiment integrating Hermes Agent (Nous Research CLI) with OmniRoute
+  as the backend AI provider. Hermes will use OmniRoute's OpenAI-compatible
+  endpoint (localhost:20128/v1) to access 291+ AI providers through one endpoint.
+
+testing:
+  runner: "none"
+  framework: "none"
+  layers:
+    unit: false
+    integration: false
+    e2e: false
+  coverage: false
+  quality:
+    linter: false
+    type_checker: false
+    formatter: false

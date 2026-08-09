@@ -1,0 +1,31 @@
+# Hermes Agent — OmniRoute Custom Endpoint Configuration
+#
+# Copy relevant sections into ~/.hermes/config.yaml
+# Or use: scripts/configure-hermes.sh (handles backup + write automatically)
+
+model:
+  # Option A: auto-routing (demo, dynamic model selection)
+  # OmniRoute picks the best provider for each request.
+  default: auto
+
+  # Option B: pinned >= 128k (recommended for production / stable use)
+  # default: google/gemini-2.5-flash
+
+  # Custom endpoint pointing at local OmniRoute gateway
+  provider: custom
+  base_url: http://localhost:20128/v1
+  api_key: ""  # keyless — OmniRoute default, no API key needed
+
+  # Uncomment for pinned models to set explicit context length.
+  # Required if the routed model has < 64k context (Hermes minimum).
+  # context_length: 1048576  # gemini-2.5-flash = 1M tokens
+
+# Auxiliary tasks (vision, compression, MoA) route through the same
+# endpoint by default. Override per-task if the routed model lacks
+# the capability:
+#
+# auxiliary:
+#   compression:
+#     provider: custom
+#     # model: google/gemini-2.5-flash  # needs >= main context for summarizer
+#     # base_url: http://localhost:20128/v1
