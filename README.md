@@ -58,12 +58,29 @@ hermes chat -p "Hello, which provider are you?"
 
 | Model | Context | Use Case |
 |-------|---------|----------|
-| `auto` | varies | Demo / dynamic routing |
+| `auto/best-coding` | varies | **Recommended** — combo model, best provider per request |
+| `auto/best-chat` | varies | Combo model, optimized for chat |
+| `auto` | varies | Basic auto-routing (may hit broken free tiers) |
 | `google/gemini-2.5-flash` | 1M | Production (stable, free) |
 | `meta-llama/llama-3.3-70b-versatile` | 128k | Production (stable) |
 | `openai/gpt-4o-mini` | 128k | Production (stable) |
 
 Pin >= 128k models to avoid Hermes' 64k context minimum. See [docs/EDGE_CASES.md](docs/EDGE_CASES.md) for details.
+
+### Model Fallback Behavior
+
+OmniRoute's `auto` models route to different providers per request. Some free tier providers (especially `oc/` prefix models like `oc/hy3-free`, `oc/north-mini-code-free`) frequently return 401 errors due to auth issues or exhausted quotas.
+
+**Tested results:**
+
+| Model | Behavior | Result |
+|-------|----------|--------|
+| `auto/chat` | Routes to basic free tiers | ❌ Frequent 401 errors (12+ failures in logs) |
+| `auto/best-coding` | Uses combo models, selects best provider | ✅ Stable, no 401 errors |
+
+The `best-*` and `pro-*` combo models are more reliable because they evaluate multiple providers and pick the best available one, rather than defaulting to a single free tier.
+
+**Recommendation:** Use `auto/best-coding` or `auto/best-chat` instead of plain `auto` for production use.
 
 ### Isolated Mode
 
@@ -127,9 +144,10 @@ The Docker Compose file pins `diegosouzapw/omniroute:3.8.49` and binds ports 201
 |---------|-----|---------|
 | Port 20128 in use | Kill conflicting process or change `OMNIROUTE_PORT` | `ss -tlnp | grep :20128` |
 | Hermes context error | Pin >= 128k model | See `config/hermes-omnirouter.example.yaml` |
-| 401 Unauthorized | Set API key | `hermes config set model.api_key YOUR_KEY` |
+| 401 Unauthorized | Set API key or switch model | `hermes config set model.api_key YOUR_KEY` or use `auto/best-coding` |
 | Model not found | Pin a specific model | Check `curl localhost:20128/v1/models` |
 | Streaming stalls | Increase timeout, check egress | See [docs/EDGE_CASES.md](docs/EDGE_CASES.md) |
+| 401 from free tier models | Switch to `auto/best-coding` | Plain `auto` routes to broken `oc/*` free tiers; `best-*` combo models are more reliable |
 
 ## Teardown
 
