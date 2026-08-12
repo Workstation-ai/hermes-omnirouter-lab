@@ -1,9 +1,7 @@
 services:
   omniroute:
     image: diegosouzapw/omniroute:3.8.49
-    ports:
-      - "127.0.0.1:20128:20128"
-      - "127.0.0.1:20129:20129"
+    network_mode: host
     environment:
       - OMNIROUTE_HOST=0.0.0.0
     healthcheck:
