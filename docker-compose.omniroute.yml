@@ -1,5 +1,10 @@
 services:
   omniroute:
+    # NOTE: `network_mode: host` is required for the free-tier providers
+    # (opencode, felo-web, etc.) to be reachable from inside the container.
+    # The default bridge network blocks outbound HTTPS in many environments.
+    # With host networking, OmniRoute binds to 0.0.0.0:20128 (API) and
+    # the Next.js dashboard is served at http://localhost:20128/dashboard.
     image: diegosouzapw/omniroute:3.8.49
     network_mode: host
     environment:

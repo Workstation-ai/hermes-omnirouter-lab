@@ -143,5 +143,7 @@ else
 fi
 
 info ""
+info "OmniRoute Dashboard: http://localhost:${OMNIROUTE_PORT}/dashboard"
+info ""
 info "Setup complete. Next step:"
 info "  ./scripts/configure-hermes.sh"

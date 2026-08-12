@@ -99,5 +99,7 @@ else
 fi
 
 info ""
+info "OmniRoute Dashboard: http://localhost:${OMNIROUTE_PORT}/dashboard"
+info ""
 info "Configuration complete. Next step:"
 info "  ./scripts/smoke-test.sh"
