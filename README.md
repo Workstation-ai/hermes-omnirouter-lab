@@ -117,7 +117,17 @@ docker compose -f docker-compose.omniroute.yml up -d
 ./scripts/setup.sh --compose
 ```
 
-The Docker Compose file pins `diegosouzapw/omniroute:3.8.49` and binds ports 20128/20129 to localhost.
+The Docker Compose file pins `diegosouzapw/omniroute:3.8.49` and uses `network_mode: host` so the container can reach free-tier providers directly (the default bridge network often blocks outbound HTTPS in restricted environments).
+
+### Dashboard
+
+OmniRoute ships a Next.js dashboard with live provider health, token budgets, and routing analytics. Access it at:
+
+```
+http://localhost:20128/dashboard
+```
+
+The dashboard URL is printed automatically by `./scripts/setup.sh` and `./scripts/configure-hermes.sh`.
 
 ## Scripts Reference
 
@@ -148,6 +158,8 @@ The Docker Compose file pins `diegosouzapw/omniroute:3.8.49` and binds ports 201
 | Model not found | Pin a specific model | Check `curl localhost:20128/v1/models` |
 | Streaming stalls | Increase timeout, check egress | See [docs/EDGE_CASES.md](docs/EDGE_CASES.md) |
 | 401 from free tier models | Switch to `auto/best-coding` | Plain `auto` routes to broken `oc/*` free tiers; `best-*` combo models are more reliable |
+| ConnectTimeoutError to providers | Use `network_mode: host` in Docker Compose | The default bridge network blocks outbound HTTPS in many environments; the compose file already uses `network_mode: host` |
+| Dashboard unreachable | Open `http://localhost:20128/dashboard` | Requires the container to be running; the dashboard is served via the main API port
 
 ## Teardown
 
